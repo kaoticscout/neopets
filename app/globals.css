@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+
+:root {
+  --neopets-blue: #4a90e2;
+  --neopets-pink: #ff6b9d;
+  --neopets-yellow: #ffd93d;
+  --neopets-green: #6bcf7f;
+  --neopets-purple: #a78bfa;
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: linear-gradient(
+    135deg,
+    #ffe5f1 0%,
+    #e0f2ff 25%,
+    #e8f5e9 50%,
+    #fff4e0 75%,
+    #f3e5f5 100%
+  );
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Neopets-style bubbly elements */
+.bubble {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+  backdrop-filter: blur(10px);
+  border: 3px solid;
+  border-image: linear-gradient(135deg, #4a90e2, #ff6b9d, #ffd93d) 1;
+  box-shadow: 0 8px 32px rgba(74, 144, 226, 0.3);
+}
+
+/* Playful text effects */
+.text-neopets-gradient {
+  background: linear-gradient(135deg, #4a90e2 0%, #ff6b9d 50%, #ffd93d 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
