@@ -100,7 +100,7 @@ export function getRarityBadgeColor(tier: RarityTier): string {
 }
 
 /**
- * Get rarity border color for cards and borders
+ * Get rarity border color for cards and borders (as CSS class)
  */
 export function getRarityBorderColor(tier: RarityTier): string {
   const colors: Record<RarityTier, string> = {
@@ -111,4 +111,39 @@ export function getRarityBorderColor(tier: RarityTier): string {
     legendary: 'border-amber-500',
   }
   return colors[tier]
+}
+
+/**
+ * Get rarity border color as RGB value for CSS variables
+ */
+export function getRarityBorderColorValue(tier: RarityTier): string {
+  const colors: Record<RarityTier, string> = {
+    common: 'rgb(156, 163, 175)', // gray-400
+    uncommon: 'rgb(34, 197, 94)', // green-500
+    rare: 'rgb(59, 130, 246)', // blue-500
+    epic: 'rgb(147, 51, 234)', // purple-600
+    legendary: 'rgb(245, 158, 11)', // amber-500
+  }
+  return colors[tier]
+}
+
+/**
+ * Get rarity glow color for the rectangular border glow effect
+ */
+export function getRarityGlowColor(tier: RarityTier): string {
+  const colors: Record<RarityTier, string> = {
+    common: 'rgba(156, 163, 175, 0.8)', // gray-400
+    uncommon: 'rgba(34, 197, 94, 0.8)', // green-500
+    rare: 'rgba(59, 130, 246, 0.8)', // blue-500
+    epic: 'rgba(147, 51, 234, 0.8)', // purple-600
+    legendary: 'rgba(245, 158, 11, 0.9)', // amber-500
+  }
+  return colors[tier]
+}
+
+/**
+ * Get rarity glow class name for CSS variables
+ */
+export function getRarityGlowClass(tier: RarityTier): string {
+  return `rarity-glow-${tier}`
 }

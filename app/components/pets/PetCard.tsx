@@ -9,7 +9,8 @@ import {
   getPetRarity,
   getRarityLabel,
   getRarityBadgeColor,
-  getRarityBorderColor,
+  getRarityBorderColorValue,
+  getRarityGlowColor,
 } from '../../../lib/rarity'
 
 interface PetCardProps {
@@ -20,12 +21,19 @@ export function PetCard({ pet }: PetCardProps) {
   const rarityTier = getPetRarity(pet.slug)
   const rarityLabel = getRarityLabel(rarityTier)
   const rarityColorClass = getRarityBadgeColor(rarityTier)
-  const rarityBorderClass = getRarityBorderColor(rarityTier)
+  const rarityBorderColor = getRarityBorderColorValue(rarityTier)
+  const rarityGlowColor = getRarityGlowColor(rarityTier)
 
   return (
     <Link href={`/pets/${pet.slug}`} className="block overflow-visible">
       <Card
-        className={`comic-card group relative h-full cursor-pointer border-2 transition-transform duration-300 hover:-rotate-1 hover:scale-105 ${rarityBorderClass}`}
+        className="comic-card group relative h-full cursor-pointer transition-transform duration-300 hover:-rotate-1 hover:scale-105"
+        style={
+          {
+            '--rarity-glow-color': rarityGlowColor,
+            '--rarity-border-color': rarityBorderColor,
+          } as React.CSSProperties
+        }
       >
         {/* Rarity Badge - positioned outside card bounds */}
         <div className="absolute -right-3 -top-3 z-20">

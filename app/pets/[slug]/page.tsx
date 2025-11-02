@@ -16,7 +16,8 @@ import {
   getColorRarity,
   getRarityLabel,
   getRarityBadgeColor,
-  getRarityBorderColor,
+  getRarityBorderColorValue,
+  getRarityGlowColor,
 } from '../../../lib/rarity'
 
 export default function PetDetailPage() {
@@ -225,7 +226,7 @@ export default function PetDetailPage() {
             <div className="flex max-h-64 flex-wrap gap-2 overflow-y-auto rounded-bubble bg-white/50 p-2">
               {pet.colors.map((color: ColorData) => {
                 const colorRarity = getColorRarity(color.name)
-                const rarityBorderClass = getRarityBorderColor(colorRarity)
+                const rarityBorderColor = getRarityBorderColorValue(colorRarity)
                 // Get a simple color for the dot indicator
                 const rarityDotColor = {
                   common: 'bg-gray-400',
@@ -245,9 +246,10 @@ export default function PetDetailPage() {
                     className={cn(
                       'group relative rounded-full border-2 px-3 py-1 text-xs font-bold transition-all duration-200',
                       selectedColor?.slug === color.slug
-                        ? `scale-110 bg-neopets-blue text-white shadow-neopets ${rarityBorderClass}`
-                        : `${rarityBorderClass} bg-white text-neopets-blue hover:scale-105`
+                        ? 'scale-110 bg-neopets-blue text-white shadow-neopets'
+                        : 'bg-white text-neopets-blue hover:scale-105'
                     )}
+                    style={{ borderColor: rarityBorderColor } as React.CSSProperties}
                   >
                     {color.name}
                     {/* Rarity indicator dot */}
@@ -290,18 +292,25 @@ export default function PetDetailPage() {
             const rarityTier = getColorRarity(color.name)
             const rarityLabel = getRarityLabel(rarityTier)
             const rarityColorClass = getRarityBadgeColor(rarityTier)
-            const rarityBorderClass = getRarityBorderColor(rarityTier)
+            const rarityBorderColor = getRarityBorderColorValue(rarityTier)
+            const rarityGlowColor = getRarityGlowColor(rarityTier)
 
             return (
               <Card
                 key={color.slug}
                 data-color-slug={color.slug}
                 className={cn(
-                  `comic-card group relative h-full cursor-pointer border-2 transition-transform duration-300 ${rarityBorderClass}`,
+                  'comic-card group relative h-full cursor-pointer transition-transform duration-300',
                   isSelected
                     ? 'scale-105 shadow-neopets-lg ring-4 ring-neopets-yellow'
                     : 'hover:-rotate-1 hover:scale-105'
                 )}
+                style={
+                  {
+                    '--rarity-glow-color': rarityGlowColor,
+                    '--rarity-border-color': rarityBorderColor,
+                  } as React.CSSProperties
+                }
                 onClick={() => {
                   setSelectedColor(color)
                   window.scrollTo({ top: 0, behavior: 'smooth' })
