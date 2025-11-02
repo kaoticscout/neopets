@@ -6,10 +6,16 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 export function Card({ className, children, ...props }: CardProps) {
+  // If comic-card class is present, don't add bubble (comic-card has its own styling)
+  // Also use overflow-visible for comic-cards so rarity stickers aren't clipped
+  const isComicCard = className?.includes('comic-card')
+
   return (
     <div
       className={cn(
-        'bubble overflow-hidden rounded-big transition-all duration-300 hover:scale-105',
+        !isComicCard && 'bubble',
+        isComicCard ? 'overflow-visible' : 'overflow-hidden',
+        'rounded-big transition-all duration-300',
         className
       )}
       {...props}

@@ -19,7 +19,7 @@ export function ColorCard({ petSlug, color }: ColorCardProps) {
   return (
     <Link href={`/pets/${petSlug}/colors/${color.slug}`}>
       <Card className="h-full cursor-pointer">
-        <div className="relative aspect-square w-full bg-gradient-to-br from-blue-100 to-purple-100">
+        <div className="relative aspect-square w-full bg-gray-50">
           <Image
             src={imagePath}
             alt={`${color.name} (${gender})`}

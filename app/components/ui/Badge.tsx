@@ -8,14 +8,10 @@ interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
 
 export function Badge({ variant = 'default', className, children, ...props }: BadgeProps) {
   const variants = {
-    default:
-      'bg-gradient-to-r from-neopets-lightBlue to-neopets-blue text-white border-2 border-white',
-    primary:
-      'bg-gradient-to-r from-neopets-blue to-neopets-lightBlue text-white border-2 border-white',
-    success:
-      'bg-gradient-to-r from-neopets-green to-neopets-lightGreen text-white border-2 border-white',
-    warning:
-      'bg-gradient-to-r from-neopets-yellow to-neopets-lightYellow text-gray-800 border-2 border-white',
+    default: 'bg-neopets-blue text-white border-2 border-white',
+    primary: 'bg-neopets-blue text-white border-2 border-white',
+    success: 'bg-neopets-green text-white border-2 border-white',
+    warning: 'bg-neopets-yellow text-gray-800 border-2 border-white',
   }
 
   return (

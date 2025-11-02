@@ -18,10 +18,14 @@ export default function PetsPage() {
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8">
         <div className="mb-6 text-center">
-          <span className="mb-4 block text-5xl">🐾</span>
-          <h1 className="text-neopets-gradient mb-4 text-5xl font-extrabold">All Neopets</h1>
-          <p className="text-xl font-bold text-gray-700">
-            Browse through all available Neopet species and their colors!
+          <h1 className="mb-4 font-comic text-5xl font-extrabold text-neopets-blue">
+            The Complete Collection
+          </h1>
+          <p className="mb-2 text-xl font-bold text-gray-700">
+            Browse through every Neopet species in your collection
+          </p>
+          <p className="text-sm italic text-gray-500">
+            Each one a collectible waiting to be discovered
           </p>
         </div>
 

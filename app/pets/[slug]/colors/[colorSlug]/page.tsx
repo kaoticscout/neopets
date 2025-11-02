@@ -8,6 +8,7 @@ import { Button } from '../../../../components/ui/Button'
 import { Badge } from '../../../../components/ui/Badge'
 import { Skeleton } from '../../../../components/ui/Skeleton'
 import { useParams } from 'next/navigation'
+import type { ColorData } from '../../../../../lib/data'
 
 export default function ColorDetailPage() {
   const params = useParams()
@@ -45,7 +46,7 @@ export default function ColorDetailPage() {
   }
 
   const pet = data.data
-  const color = pet.colors.find((c: any) => c.slug === colorSlug)
+  const color = pet.colors.find((c: ColorData) => c.slug === colorSlug)
 
   if (!color) {
     return (
@@ -80,7 +81,7 @@ export default function ColorDetailPage() {
       <div className="mb-8 grid gap-8 md:grid-cols-2">
         {/* Image Section */}
         <div>
-          <div className="relative mb-4 aspect-square overflow-hidden rounded-big border-4 border-white bg-gradient-to-br from-neopets-lightBlue via-neopets-lightPink to-neopets-lightYellow shadow-neopets-lg">
+          <div className="relative mb-4 aspect-square overflow-hidden rounded-big border-4 border-white bg-gray-50 shadow-neopets-lg">
             <Image
               src={imagePath}
               alt={`${pet.name} ${color.name} (${gender})`}
@@ -108,7 +109,7 @@ export default function ColorDetailPage() {
 
         {/* Details Section */}
         <div>
-          <h1 className="text-neopets-gradient mb-2 text-5xl font-extrabold">
+          <h1 className="mb-2 text-5xl font-extrabold text-neopets-blue">
             {pet.name} - {color.name}
           </h1>
           <div className="mb-6 flex items-center gap-2">
@@ -141,11 +142,11 @@ export default function ColorDetailPage() {
 
       {/* Both Gender Images */}
       <div className="mt-12">
-        <h2 className="text-neopets-gradient mb-6 text-center text-3xl font-extrabold">
-          🎭 Both Variants 🎭
+        <h2 className="mb-6 text-center text-3xl font-extrabold text-neopets-blue">
+          Both Variants
         </h2>
         <div className="grid gap-6 md:grid-cols-2">
-          <div className="relative aspect-square overflow-hidden rounded-big border-4 border-white bg-gradient-to-br from-neopets-lightPink to-neopets-lightPurple shadow-neopets">
+          <div className="relative aspect-square overflow-hidden rounded-big border-4 border-white bg-gray-50 shadow-neopets">
             <Image
               src={color.imagePathFemale}
               alt={`${pet.name} ${color.name} (female)`}
@@ -157,7 +158,7 @@ export default function ColorDetailPage() {
               <Badge variant="primary">Female</Badge>
             </div>
           </div>
-          <div className="relative aspect-square overflow-hidden rounded-big border-4 border-white bg-gradient-to-br from-neopets-lightBlue to-neopets-lightGreen shadow-neopets">
+          <div className="relative aspect-square overflow-hidden rounded-big border-4 border-white bg-gray-50 shadow-neopets">
             <Image
               src={color.imagePathMale}
               alt={`${pet.name} ${color.name} (male)`}

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePet } from '../../../hooks/usePets'
+import { useRoster } from '../../../hooks/useRoster'
 import { Button } from '../../components/ui/Button'
 import { Badge } from '../../components/ui/Badge'
 import { Skeleton } from '../../components/ui/Skeleton'
@@ -15,8 +16,10 @@ export default function PetDetailPage() {
   const params = useParams()
   const slug = params.slug as string
   const { data, isLoading, error } = usePet(slug)
+  const { addToRoster, isInRoster, isFull } = useRoster()
   const [selectedColor, setSelectedColor] = useState<ColorData | null>(null)
   const [selectedGender, setSelectedGender] = useState<'male' | 'female'>('female')
+  const [showRosterSuccess, setShowRosterSuccess] = useState(false)
 
   // Set default color when pet data loads
   useEffect(() => {
@@ -77,7 +80,7 @@ export default function PetDetailPage() {
       <div className="mb-12 grid gap-8 md:grid-cols-2">
         {/* Main Image Display */}
         <div>
-          <div className="relative mb-4 aspect-square overflow-hidden rounded-big border-4 border-white bg-gradient-to-br from-neopets-lightBlue via-neopets-lightPink to-neopets-lightYellow shadow-neopets-lg">
+          <div className="relative mb-4 aspect-square overflow-hidden rounded-big border-4 border-white bg-gray-50 shadow-neopets-lg">
             {selectedColor ? (
               <Image
                 src={
@@ -120,25 +123,86 @@ export default function PetDetailPage() {
           </div>
 
           {/* Current Color Display */}
-          {selectedColor && (
-            <div className="text-center">
+          {selectedColor && pet && (
+            <div className="space-y-3 text-center">
               <Badge variant="success" className="px-4 py-2 text-base">
-                🎨 {selectedColor.name}
+                {selectedColor.name}
               </Badge>
+
+              {/* Add to Roster Button */}
+              {(() => {
+                const alreadyInRoster = isInRoster(slug, selectedColor.slug, selectedGender)
+                const imagePath =
+                  selectedGender === 'female'
+                    ? selectedColor.imagePathFemale
+                    : selectedColor.imagePathMale
+
+                return (
+                  <div>
+                    {alreadyInRoster ? (
+                      <div className="space-y-2">
+                        <Badge variant="warning" className="px-4 py-2 text-base">
+                          ✓ Already in Roster
+                        </Badge>
+                        <Link href="/roster">
+                          <Button variant="outline" size="sm" className="w-full">
+                            View My Roster
+                          </Button>
+                        </Link>
+                      </div>
+                    ) : (
+                      <Button
+                        onClick={() => {
+                          const newPet = {
+                            petSlug: slug,
+                            petName: pet.name,
+                            colorSlug: selectedColor.slug,
+                            colorName: selectedColor.name,
+                            gender: selectedGender,
+                            imagePath: imagePath,
+                          }
+
+                          // Check if already in roster before adding
+                          if (!isInRoster(slug, selectedColor.slug, selectedGender)) {
+                            addToRoster(newPet)
+                            setShowRosterSuccess(true)
+                            setTimeout(() => setShowRosterSuccess(false), 3000)
+                          }
+                        }}
+                        disabled={isFull && !isInRoster(slug, selectedColor.slug, selectedGender)}
+                        className="w-full font-comic"
+                        size="lg"
+                      >
+                        {isFull && !isInRoster(slug, selectedColor.slug, selectedGender)
+                          ? 'Roster Full (3/3)'
+                          : showRosterSuccess
+                            ? '✓ Added to Roster!'
+                            : '⭐ Add to My Roster'}
+                      </Button>
+                    )}
+                    {showRosterSuccess && (
+                      <p className="mt-2 animate-pulse text-sm font-bold text-green-600">
+                        Added to roster!
+                      </p>
+                    )}
+                  </div>
+                )
+              })()}
             </div>
           )}
         </div>
 
         <div>
-          <h1 className="text-neopets-gradient mb-4 text-5xl font-extrabold">{pet.name}</h1>
+          <h1 className="mb-4 font-comic text-5xl font-extrabold text-neopets-blue">{pet.name}</h1>
           <div className="mb-6 flex items-center gap-4">
-            <Badge variant="primary" className="px-6 py-3 text-lg">
-              ✨ {pet.totalColors} Colors Available ✨
+            <Badge variant="primary" className="px-6 py-3 font-comic text-lg">
+              {pet.totalColors} Variants in Collection
             </Badge>
           </div>
           <p className="mb-6 font-semibold text-gray-700">
-            Explore all available color combinations for {pet.name}, from classic colors to rare
-            paint brush and lab ray variants. Select a color below to see it!
+            Discover every collectible color variant for {pet.name}! From classic editions to
+            ultra-rare paint brush exclusives and mysterious lab ray transformations. Each one is a
+            gem worth collecting.
           </p>
 
           {/* Quick Color Selector */}
@@ -156,7 +220,7 @@ export default function PetDetailPage() {
                   className={cn(
                     'rounded-full px-3 py-1 text-xs font-bold transition-all duration-200',
                     selectedColor?.slug === color.slug
-                      ? 'scale-110 bg-gradient-to-r from-neopets-blue to-neopets-lightBlue text-white shadow-neopets'
+                      ? 'scale-110 bg-neopets-blue text-white shadow-neopets'
                       : 'border-[2px] border-neopets-blue bg-white text-neopets-blue hover:scale-105'
                   )}
                 >
@@ -166,19 +230,24 @@ export default function PetDetailPage() {
             </div>
           </div>
 
-          <Link href="/pets">
-            <Button variant="outline">← Back to All Pets</Button>
-          </Link>
+          <div className="flex gap-3">
+            <Link href="/pets">
+              <Button variant="outline">← Back to All Pets</Button>
+            </Link>
+            <Link href="/roster">
+              <Button variant="ghost">View My Roster</Button>
+            </Link>
+          </div>
         </div>
       </div>
 
       {/* Colors Section */}
       <div>
-        <h2 className="text-neopets-gradient mb-6 text-center text-3xl font-extrabold">
-          🎨 All Colors 🎨
+        <h2 className="mb-2 text-center font-comic text-4xl font-extrabold text-neopets-blue">
+          Complete Color Collection
         </h2>
-        <p className="mb-4 text-center font-semibold text-gray-700">
-          Click any color card below to view it in the display above!
+        <p className="mb-6 text-center font-semibold text-gray-700">
+          Click any color below to view it in your display. Hunt for rare finds!
         </p>
         <div
           className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
@@ -214,7 +283,7 @@ export default function PetDetailPage() {
                     : 'hover:scale-105'
                 )}
               >
-                <div className="relative aspect-square w-full bg-gradient-to-br from-neopets-lightBlue via-neopets-lightPink to-neopets-lightYellow">
+                <div className="relative aspect-square w-full bg-gray-50">
                   <Image
                     src={imagePath}
                     alt={`${pet.name} ${color.name} (${selectedGender})`}
@@ -223,7 +292,7 @@ export default function PetDetailPage() {
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   />
                 </div>
-                <div className="bg-gradient-to-br from-white to-gray-50 p-3">
+                <div className="bg-white p-3">
                   <h3
                     className={cn(
                       'mb-2 text-center text-lg font-extrabold',

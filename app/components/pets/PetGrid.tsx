@@ -3,6 +3,7 @@
 import { PetCard } from './PetCard'
 import { SkeletonCard } from '../ui/Skeleton'
 import { usePets } from '../../../hooks/usePets'
+import type { PetData } from '../../../lib/data'
 
 interface PetGridProps {
   search?: string
@@ -38,8 +39,8 @@ export function PetGrid({ search }: PetGridProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-      {data.data.map((pet: any) => (
+    <div className="grid grid-cols-1 gap-8 overflow-visible sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      {data.data.map((pet: PetData) => (
         <PetCard key={pet.slug} pet={pet} />
       ))}
     </div>

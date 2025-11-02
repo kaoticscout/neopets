@@ -18,10 +18,8 @@ export function Button({
     'font-bold rounded-bubble transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-neopets hover:shadow-neopets-lg'
 
   const variants = {
-    primary:
-      'bg-gradient-to-r from-neopets-blue to-neopets-lightBlue text-white border-2 border-white hover:from-neopets-lightBlue hover:to-neopets-blue',
-    secondary:
-      'bg-gradient-to-r from-neopets-pink to-neopets-lightPink text-white border-2 border-white hover:from-neopets-lightPink hover:to-neopets-pink',
+    primary: 'bg-neopets-blue text-white border-2 border-white hover:bg-neopets-lightBlue',
+    secondary: 'bg-neopets-pink text-white border-2 border-white hover:bg-neopets-lightPink',
     outline:
       'bg-white border-3 border-neopets-blue text-neopets-blue hover:bg-neopets-lightBlue hover:text-white',
     ghost:

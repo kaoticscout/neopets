@@ -7,6 +7,7 @@ import { cn } from '../../../lib/utils'
 const links = [
   { href: '/', label: 'Home' },
   { href: '/pets', label: 'Pets' },
+  { href: '/roster', label: 'My Roster' },
 ]
 
 export function Navigation() {
@@ -24,7 +25,7 @@ export function Navigation() {
             className={cn(
               'transform rounded-bubble px-4 py-2 text-sm font-bold transition-all duration-300 hover:scale-110',
               isActive
-                ? 'bg-gradient-to-r from-neopets-blue to-neopets-lightBlue text-white shadow-neopets'
+                ? 'bg-neopets-blue text-white shadow-neopets'
                 : 'border-[2px] border-neopets-blue bg-white/80 text-neopets-blue hover:bg-neopets-lightBlue hover:text-white'
             )}
           >
