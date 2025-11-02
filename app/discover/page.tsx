@@ -383,7 +383,10 @@ export default function DiscoverFriendsPage() {
                     }
                   }}
                 >
-                  <Link href={`/pets/${pet.slug}`} className="block overflow-visible">
+                  <Link
+                    href={`/pets/${pet.slug}?color=${color.slug}`}
+                    className="block overflow-visible"
+                  >
                     <Card
                       className={cn(
                         'comic-card group relative h-full cursor-pointer transition-transform duration-300 hover:-rotate-1',

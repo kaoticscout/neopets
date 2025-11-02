@@ -9,7 +9,7 @@ import { Button } from '../../components/ui/Button'
 import { Badge } from '../../components/ui/Badge'
 import { Card, CardContent } from '../../components/ui/Card'
 import { Skeleton } from '../../components/ui/Skeleton'
-import { useParams } from 'next/navigation'
+import { useParams, useSearchParams } from 'next/navigation'
 import { cn } from '../../../lib/utils'
 import type { ColorData } from '../../../lib/data'
 import {
@@ -22,6 +22,7 @@ import {
 
 export default function PetDetailPage() {
   const params = useParams()
+  const searchParams = useSearchParams()
   const slug = params.slug as string
   const { data, isLoading, error } = usePet(slug)
   const { addToRoster, isInRoster, isFull } = useRoster()
@@ -29,15 +30,27 @@ export default function PetDetailPage() {
   const [selectedGender, setSelectedGender] = useState<'male' | 'female'>('female')
   const [showRosterSuccess, setShowRosterSuccess] = useState(false)
 
-  // Set default color when pet data loads
+  // Set default color when pet data loads or URL color parameter changes
   useEffect(() => {
-    if (data?.data?.colors && data.data.colors.length > 0 && !selectedColor) {
-      // Prefer 'blue' if available, otherwise first color
-      const defaultColor =
-        data.data.colors.find((c: ColorData) => c.slug === 'blue') || data.data.colors[0]
-      setSelectedColor(defaultColor)
+    if (data?.data?.colors && data.data.colors.length > 0) {
+      // Check if color is specified in URL query params
+      const colorSlugFromUrl = searchParams.get('color')
+      if (colorSlugFromUrl) {
+        const colorFromUrl = data.data.colors.find((c: ColorData) => c.slug === colorSlugFromUrl)
+        if (colorFromUrl && selectedColor?.slug !== colorFromUrl.slug) {
+          setSelectedColor(colorFromUrl)
+          return
+        }
+      }
+      // Only set default if no color is currently selected
+      if (!selectedColor) {
+        // Prefer 'blue' if available, otherwise first color
+        const defaultColor =
+          data.data.colors.find((c: ColorData) => c.slug === 'blue') || data.data.colors[0]
+        setSelectedColor(defaultColor)
+      }
     }
-  }, [data, selectedColor])
+  }, [data, selectedColor, searchParams])
 
   if (isLoading) {
     return (
