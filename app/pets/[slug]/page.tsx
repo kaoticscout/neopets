@@ -11,7 +11,7 @@ import { Card, CardContent } from '../../components/ui/Card'
 import { Skeleton } from '../../components/ui/Skeleton'
 import { useParams, useSearchParams } from 'next/navigation'
 import { cn } from '../../../lib/utils'
-import type { ColorData } from '../../../lib/data'
+import type { ColorData } from '../../../lib/data-client'
 import {
   getColorRarity,
   getRarityLabel,

@@ -1,0 +1,218 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2024-01-01",
+  "description": "Rarity distribution for Neopets and paint colors. Uses a 5-tier system: common (gray), uncommon (green), rare (blue), epic (purple), legendary (gold).",
+
+  "petRarity": {
+    "totalPets": 55,
+    "distribution": {
+      "legendary": 4,
+      "epic": 6,
+      "rare": 9,
+      "uncommon": 14,
+      "common": 22
+    },
+    "pets": {
+      "legendary": ["krawk", "draik", "lutari", "vandagyre"],
+      "epic": ["hissi", "ixi", "cybunny", "chomby", "jetsam", "shoyru"],
+      "rare": ["kacheek", "gelert", "lupe", "kougra", "eyrie", "uni", "peophin", "chia", "aisha"],
+      "uncommon": [
+        "acara",
+        "blumaroo",
+        "bruce",
+        "buzz",
+        "elephante",
+        "flotsam",
+        "grarrl",
+        "grundo",
+        "jubjub",
+        "kau",
+        "kyrii",
+        "lenny",
+        "meerca",
+        "mynci"
+      ],
+      "common": [
+        "bori",
+        "moehog",
+        "nimmo",
+        "ogrin",
+        "poogle",
+        "pteri",
+        "quiggle",
+        "ruki",
+        "scorchio",
+        "skeith",
+        "techo",
+        "tonu",
+        "tuskaninny",
+        "usul",
+        "wocky",
+        "xweetok",
+        "yurble",
+        "zafara",
+        "kiko",
+        "koi",
+        "korbat",
+        "gnorbu"
+      ]
+    }
+  },
+
+  "colorRarity": {
+    "totalColors": 112,
+    "distribution": {
+      "legendary": 5,
+      "epic": 10,
+      "rare": 18,
+      "uncommon": 28,
+      "common": 53
+    },
+    "colors": {
+      "legendary": ["rainbow", "mutant", "8-bit", "magma", "halloween"],
+      "epic": [
+        "darigan",
+        "faerie",
+        "royalboy",
+        "royalgirl",
+        "wraith",
+        "transparent",
+        "stealthy",
+        "water",
+        "maraquan",
+        "eventide"
+      ],
+      "rare": [
+        "plushie",
+        "shadow",
+        "zombie",
+        "fire",
+        "ice",
+        "robot",
+        "ghost",
+        "pirate",
+        "island",
+        "christmas",
+        "desert",
+        "dimensional",
+        "woodland",
+        "steampunk",
+        "pastel",
+        "maractite",
+        "oil paint",
+        "origami"
+      ],
+      "uncommon": [
+        "baby",
+        "disco",
+        "electric",
+        "glowing",
+        "invisible",
+        "sketch",
+        "split",
+        "starry",
+        "spotted",
+        "striped",
+        "speckled",
+        "checkered",
+        "camouflage",
+        "swamp gas",
+        "gold",
+        "silver",
+        "skunk",
+        "snow",
+        "tyrannian",
+        "elderlyboy",
+        "elderlygirl",
+        "cloud",
+        "chocolate",
+        "jelly",
+        "biscuit",
+        "candy",
+        "msp"
+      ],
+      "common": [
+        "blue",
+        "red",
+        "green",
+        "yellow",
+        "orange",
+        "purple",
+        "pink",
+        "brown",
+        "white",
+        "grey",
+        "apple",
+        "asparagus",
+        "aubergine",
+        "avocado",
+        "blueberry",
+        "carrot",
+        "chokato",
+        "coconut",
+        "custard",
+        "durian",
+        "garlic",
+        "gooseberry",
+        "grape",
+        "lemon",
+        "lime",
+        "mallow",
+        "onion",
+        "pea",
+        "peach",
+        "pear",
+        "pepper",
+        "pineapple",
+        "plum",
+        "strawberry",
+        "thornberry",
+        "tomato",
+        "ummagine",
+        "clay",
+        "marble",
+        "mosaic",
+        "relic",
+        "sponge",
+        "toy",
+        "polka dot",
+        "quigukiboy",
+        "quigukigirl",
+        "usukiboy",
+        "usukigirl",
+        "agueena",
+        "snot",
+        "alien",
+        "burlap"
+      ]
+    }
+  },
+
+  "rarityTiers": {
+    "common": {
+      "level": 1,
+      "color": "gray",
+      "description": "Most common and easily obtainable"
+    },
+    "uncommon": {
+      "level": 2,
+      "color": "green",
+      "description": "Slightly rarer, found with moderate frequency"
+    },
+    "rare": {
+      "level": 3,
+      "color": "blue",
+      "description": "Rare finds, harder to obtain"
+    },
+    "epic": {
+      "level": 4,
+      "color": "purple",
+      "description": "Very rare, highly sought after"
+    },
+    "legendary": {
+      "level": 5,
+      "color": "gold",
+      "description": "Extremely rare, the ultimate finds"
+    }
+  }
+}

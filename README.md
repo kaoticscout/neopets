@@ -138,6 +138,45 @@ See `lib/imagePaths.ts` for helper functions to resolve image paths.
 - [Technical Requirements Document (TRD)](./TRD.md)
 - [MVP Delivery Plan](./MVP_Delivery_Plan.md)
 
+## 🌐 Deployment
+
+### GitHub Pages
+
+This project is configured for automatic deployment to GitHub Pages using GitHub Actions.
+
+#### Setup Instructions
+
+1. **Enable GitHub Pages**:
+   - Go to your repository Settings → Pages
+   - Under "Source", select "GitHub Actions"
+   - The workflow will automatically deploy on pushes to `main` or `master` branch
+
+2. **Automatic Deployment**:
+   - The `.github/workflows/deploy.yml` workflow will:
+     - Build the Next.js static export
+     - Deploy to GitHub Pages automatically
+   - Pushing to `main` or `master` will trigger a new deployment
+
+3. **Manual Build & Test**:
+   ```bash
+   npm run build
+   ```
+   This creates a static export in the `out/` directory that can be served from any static hosting service.
+
+#### Deployment Features
+
+- ✅ Fully static export (no server required)
+- ✅ All data served from `public/data/` directory
+- ✅ Automatic deployment via GitHub Actions
+- ✅ Zero server configuration needed
+
+#### Custom Domain
+
+To use a custom domain:
+
+1. Add a `CNAME` file in `public/` with your domain
+2. Configure DNS settings as per GitHub Pages documentation
+
 ## 🚧 Development Status
 
 **Phase 0: Foundation & Setup** (Week 1-2) ✅ In Progress
@@ -145,6 +184,7 @@ See `lib/imagePaths.ts` for helper functions to resolve image paths.
 - [x] Project initialization
 - [x] Next.js setup with TypeScript
 - [x] ESLint, Prettier, Husky configuration
+- [x] GitHub Pages deployment configuration
 - [ ] Git repository setup
 - [ ] Database setup
 - [ ] Image serving configuration

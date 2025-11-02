@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
+import { getStats } from '../lib/data-client'
 
 export function useStats() {
   return useQuery({
     queryKey: ['stats'],
     queryFn: async () => {
-      const res = await fetch('/api/stats')
-      if (!res.ok) throw new Error('Failed to fetch stats')
-      return res.json()
+      const stats = await getStats()
+      return { data: stats }
     },
     staleTime: 10 * 60 * 1000, // 10 minutes
   })
