@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { Button } from '../components/ui/Button'
 import { Badge } from '../components/ui/Badge'
 import { Card, CardContent } from '../components/ui/Card'
+import { getColorRarity, getRarityLabel, getRarityBadgeColor } from '../../lib/rarity'
 
 export default function RosterPage() {
   const { roster, removeFromRoster, clearRoster } = useRoster()
@@ -92,9 +93,16 @@ export default function RosterPage() {
                 {pet.petName}
               </h3>
               <div className="flex flex-col items-center gap-2">
-                <Badge variant="primary" className="px-4 py-2 font-comic text-base">
-                  {pet.colorName}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  <Badge variant="primary" className="px-4 py-2 font-comic text-base">
+                    {pet.colorName}
+                  </Badge>
+                  <span
+                    className={`rounded-full px-2.5 py-1 text-xs font-bold ${getRarityBadgeColor(getColorRarity(pet.colorName))} shadow-lg`}
+                  >
+                    {getRarityLabel(getColorRarity(pet.colorName))}
+                  </span>
+                </div>
                 <Badge
                   variant={pet.gender === 'female' ? 'secondary' : 'primary'}
                   className="px-3 py-1 text-sm"

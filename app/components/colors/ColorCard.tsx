@@ -6,6 +6,12 @@ import Image from 'next/image'
 import { Card, CardContent } from '../ui/Card'
 import { Badge } from '../ui/Badge'
 import type { ColorData } from '../../../lib/data'
+import {
+  getColorRarity,
+  getRarityLabel,
+  getRarityBadgeColor,
+  getRarityBorderColor,
+} from '../../../lib/rarity'
 
 interface ColorCardProps {
   petSlug: string
@@ -15,10 +21,22 @@ interface ColorCardProps {
 export function ColorCard({ petSlug, color }: ColorCardProps) {
   const [gender, setGender] = useState<'male' | 'female'>('female')
   const imagePath = gender === 'female' ? color.imagePathFemale : color.imagePathMale
+  const rarityTier = getColorRarity(color.name)
+  const rarityLabel = getRarityLabel(rarityTier)
+  const rarityColorClass = getRarityBadgeColor(rarityTier)
+  const rarityBorderClass = getRarityBorderColor(rarityTier)
 
   return (
     <Link href={`/pets/${petSlug}/colors/${color.slug}`}>
-      <Card className="h-full cursor-pointer">
+      <Card className={`relative h-full cursor-pointer border-2 ${rarityBorderClass}`}>
+        {/* Rarity Badge - positioned outside card */}
+        <div className="absolute -right-2 -top-2 z-20">
+          <span
+            className={`rounded-full px-2 py-0.5 text-xs font-bold ${rarityColorClass} shadow-lg`}
+          >
+            {rarityLabel}
+          </span>
+        </div>
         <div className="relative aspect-square w-full bg-gray-50">
           <Image
             src={imagePath}
@@ -56,11 +74,13 @@ export function ColorCard({ petSlug, color }: ColorCardProps) {
               </button>
             </div>
           </div>
-          {color.ucExist && (
-            <Badge variant="warning" className="text-xs">
-              UC Available
-            </Badge>
-          )}
+          <div className="flex flex-wrap gap-1">
+            {color.ucExist && (
+              <Badge variant="warning" className="text-xs">
+                UC Available
+              </Badge>
+            )}
+          </div>
         </CardContent>
       </Card>
     </Link>

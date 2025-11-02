@@ -9,6 +9,7 @@ import { Badge } from '../../../../components/ui/Badge'
 import { Skeleton } from '../../../../components/ui/Skeleton'
 import { useParams } from 'next/navigation'
 import type { ColorData } from '../../../../../lib/data'
+import { getColorRarity, getRarityLabel, getRarityBadgeColor } from '../../../../../lib/rarity'
 
 export default function ColorDetailPage() {
   const params = useParams()
@@ -113,6 +114,11 @@ export default function ColorDetailPage() {
             {pet.name} - {color.name}
           </h1>
           <div className="mb-6 flex items-center gap-2">
+            <span
+              className={`rounded-full px-3 py-1.5 text-sm font-bold ${getRarityBadgeColor(getColorRarity(color.name))} shadow-lg`}
+            >
+              {getRarityLabel(getColorRarity(color.name))}
+            </span>
             {color.ucExist && <Badge variant="warning">UC Available</Badge>}
           </div>
 
