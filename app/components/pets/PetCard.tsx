@@ -68,11 +68,6 @@ export function PetCard({ pet }: PetCardProps) {
               {pet.totalColors} Variants
             </Badge>
           </div>
-          <div className="mt-2 text-center">
-            <span className="text-xs font-bold uppercase tracking-wide text-gray-500">
-              Collector&apos;s Edition
-            </span>
-          </div>
         </CardContent>
       </Card>
     </Link>

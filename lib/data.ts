@@ -42,7 +42,11 @@ const DATA_DIR = path.join(process.cwd(), 'data')
 export async function getAllPets(): Promise<PetData[]> {
   const files = fs.readdirSync(DATA_DIR)
   const petFiles = files.filter(
-    (f) => f.endsWith('.json') && f !== 'allPets.json' && f !== 'codes.json'
+    (f) =>
+      f.endsWith('.json') &&
+      f !== 'allPets.json' &&
+      f !== 'codes.json' &&
+      f !== 'rarity-distribution.json'
   )
 
   const pets: PetData[] = []

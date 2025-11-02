@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { Providers } from './providers'
 import { Header } from './components/layout/Header'
-import { Footer } from './components/layout/Footer'
 
 export const metadata: Metadata = {
   title: 'Neopets Tribute - Nostalgic Pet Gallery',
@@ -16,7 +15,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Providers>
           <Header />
           <main className="flex-1">{children}</main>
-          <Footer />
         </Providers>
       </body>
     </html>

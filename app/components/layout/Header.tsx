@@ -10,9 +10,6 @@ export function Header() {
             <h1 className="font-comic text-3xl font-extrabold text-neopets-blue transition-transform duration-300 group-hover:scale-110">
               Collector&apos;s Archive
             </h1>
-            <span className="ml-2 text-xs font-bold uppercase tracking-wider text-gray-500">
-              Edition
-            </span>
           </Link>
           <Navigation />
         </div>

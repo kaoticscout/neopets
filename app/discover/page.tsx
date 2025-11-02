@@ -9,33 +9,115 @@ import { Badge } from '../components/ui/Badge'
 import { Card, CardContent } from '../components/ui/Card'
 import { Skeleton } from '../components/ui/Skeleton'
 import { cn } from '../../lib/utils'
-import type { PetData } from '../../lib/data'
+import type { PetData, ColorData } from '../../lib/data'
 import {
   getPetRarity,
+  getColorRarity,
   getRarityLabel,
   getRarityBadgeColor,
   getRarityBorderColorValue,
   getRarityGlowColor,
+  type RarityTier,
 } from '../../lib/rarity'
 
-function getRandomPets(pets: PetData[], count: number): PetData[] {
+interface PetWithColor {
+  pet: PetData
+  color: ColorData
+}
+
+/**
+ * Calculate combined rarity percentage based on pet and color rarity
+ * Uses probability: (pet_count / total_pets) * (color_count / total_colors) * 100
+ * Lower percentage = rarer combination
+ */
+function calculateCombinedRarityPercentage(petRarity: RarityTier, colorRarity: RarityTier): number {
+  // Distribution counts from rarity-distribution.json
+  const petDistribution = {
+    legendary: 4,
+    epic: 6,
+    rare: 9,
+    uncommon: 14,
+    common: 22,
+  }
+  const colorDistribution = {
+    legendary: 5,
+    epic: 10,
+    rare: 18,
+    uncommon: 28,
+    common: 53,
+  }
+  const totalPets = 55
+  const totalColors = 112
+
+  const petProbability = petDistribution[petRarity] / totalPets
+  const colorProbability = colorDistribution[colorRarity] / totalColors
+
+  // Combined probability as percentage (rounded to 2 decimal places)
+  const combinedProbability = petProbability * colorProbability * 100
+  return Math.round(combinedProbability * 100) / 100
+}
+
+function getRandomPetsWithColors(pets: PetData[], count: number): PetWithColor[] {
   const shuffled = [...pets].sort(() => Math.random() - 0.5)
-  return shuffled.slice(0, count)
+  return shuffled.slice(0, count).map((pet) => {
+    // Filter to only colors that have image paths
+    const colorsWithImages = pet.colors.filter((c) => {
+      return c.imagePathFemale && c.imagePathFemale.trim() !== ''
+    })
+    const availableColors = colorsWithImages.length > 0 ? colorsWithImages : pet.colors
+
+    // Weight colors by rarity for better odds of higher rarity
+    // Rarity weights: legendary: 100, epic: 50, rare: 20, uncommon: 5, common: 1
+    const rarityWeights: Record<string, number> = {
+      legendary: 100,
+      epic: 50,
+      rare: 20,
+      uncommon: 5,
+      common: 1,
+    }
+
+    // Create weighted array where each color appears multiple times based on rarity
+    const weightedColors: ColorData[] = []
+    availableColors.forEach((color) => {
+      const rarity = getColorRarity(color.name)
+      const weight = rarityWeights[rarity] || 1
+      // Add the color to the weighted array 'weight' number of times
+      for (let i = 0; i < weight; i++) {
+        weightedColors.push(color)
+      }
+    })
+
+    // Select random color from weighted array
+    const randomColor =
+      weightedColors[Math.floor(Math.random() * weightedColors.length)] ||
+      availableColors[Math.floor(Math.random() * availableColors.length)] ||
+      pet.colors.find((c) => c.imagePathFemale) ||
+      pet.colors[0]
+
+    return {
+      pet,
+      color: randomColor,
+    }
+  })
 }
 
 export default function DiscoverFriendsPage() {
   const { data, isLoading, error } = usePets({ pageSize: 1000 })
   const [revealed, setRevealed] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
-  const [randomPets, setRandomPets] = useState<PetData[]>([])
+  const [randomPets, setRandomPets] = useState<PetWithColor[]>([])
   const cardRefs = useRef<(HTMLDivElement | null)[]>([])
   const containerRef = useRef<HTMLDivElement | null>(null)
+  const cardContainerRefs = useRef<(HTMLDivElement | null)[]>([])
   const [targetPositions, setTargetPositions] = useState<Array<{ left: number; top: number }>>([])
+  const [hoveredCardIndex, setHoveredCardIndex] = useState<number | null>(null)
+  const [animationComplete, setAnimationComplete] = useState(false)
+  const [showDrawAgain, setShowDrawAgain] = useState(false)
 
   const handleReveal = () => {
     if (data?.data && data.data.length > 0) {
-      const pets = getRandomPets(data.data, 5)
-      setRandomPets(pets)
+      const petsWithColors = getRandomPetsWithColors(data.data, 5)
+      setRandomPets(petsWithColors)
       setRevealed(true)
       setIsAnimating(true)
     }
@@ -56,13 +138,16 @@ export default function DiscoverFriendsPage() {
           const containerCenterY = cardContainerRect.top + cardContainerRect.height / 2
 
           // Measure each grid cell's center position
-          // Map positions: top card (index 0, z-index 50) goes to leftmost grid position
-          // bottom card (index length-1, z-index 46) goes to rightmost grid position
+          // Map positions:
+          // Top card (index 0) → position 1 (0-indexed: 0, leftmost)
+          // Card 2 (index 1) → position 2 (0-indexed: 1, second left)
+          // Card 3 (index 2) → position 5 (0-indexed: 4, rightmost)
+          // Card 4 (index 3) → position 4 (0-indexed: 3, second right)
+          // Card 5 (index 4) → position 3 (0-indexed: 2, middle)
+          const positionMapping = [0, 1, 4, 3, 2] // Maps card index to grid position
           const positions = cardRefs.current.map((ref, cardIndex) => {
             // Calculate which grid position this card should go to
-            // Card 0 (top z-index) → grid position 0 (leftmost)
-            // Card (length-1) (bottom z-index) → grid position (length-1) (rightmost)
-            const gridPosition = cardIndex
+            const gridPosition = positionMapping[cardIndex] ?? cardIndex
 
             // Get the ref for the grid cell at this position
             const gridRef = cardRefs.current[gridPosition]
@@ -84,6 +169,17 @@ export default function DiscoverFriendsPage() {
           // Animate to target positions after a brief delay
           setTimeout(() => {
             setIsAnimating(false)
+            // Wait for animation to complete (700ms duration + 300ms delay for last card + buffer)
+            setTimeout(
+              () => {
+                setAnimationComplete(true)
+                // Show draw again button 0.5 seconds after animation completes
+                setTimeout(() => {
+                  setShowDrawAgain(true)
+                }, 500)
+              },
+              700 + 300 + 100
+            ) // duration + max delay + buffer
           }, 50)
         }
       }, 200) // Wait for grid to layout
@@ -96,6 +192,8 @@ export default function DiscoverFriendsPage() {
     setRevealed(false)
     setIsAnimating(false)
     setRandomPets([])
+    setAnimationComplete(false)
+    setShowDrawAgain(false)
   }
 
   if (isLoading) {
@@ -201,45 +299,96 @@ export default function DiscoverFriendsPage() {
         {revealed && randomPets.length > 0 && (
           <>
             {/* Button */}
-            <div className="absolute -bottom-16 left-0 right-0 flex justify-center">
-              <Button onClick={handleReset} variant="outline" size="lg">
-                🎲 Draw Again
-              </Button>
-            </div>
+            {showDrawAgain && (
+              <div className="animate-in fade-in absolute -bottom-16 left-0 right-0 flex justify-center duration-300">
+                <Button onClick={handleReset} variant="outline" size="lg">
+                  🎲 Draw Again
+                </Button>
+              </div>
+            )}
 
             {/* Cards positioned absolutely relative to card-container */}
-            {randomPets.map((pet, index) => {
-              const rarityTier = getPetRarity(pet.slug)
-              const rarityLabel = getRarityLabel(rarityTier)
-              const rarityColorClass = getRarityBadgeColor(rarityTier)
-              const rarityBorderColor = getRarityBorderColorValue(rarityTier)
-              const rarityGlowColor = getRarityGlowColor(rarityTier)
+            {randomPets.map((petWithColor, index) => {
+              const { pet, color } = petWithColor
+              const petRarityTier = getPetRarity(pet.slug)
+              const colorRarityTier = getColorRarity(color.name)
+              // Use the higher (rarer) of the two rarities for display styling
+              const rarityLevels: Record<RarityTier, number> = {
+                common: 1,
+                uncommon: 2,
+                rare: 3,
+                epic: 4,
+                legendary: 5,
+              }
+              const displayRarityTier =
+                rarityLevels[petRarityTier] > rarityLevels[colorRarityTier]
+                  ? petRarityTier
+                  : colorRarityTier
+              const rarityLabel = getRarityLabel(displayRarityTier)
+              const rarityColorClass = getRarityBadgeColor(displayRarityTier)
+              const rarityBorderColor = getRarityBorderColorValue(displayRarityTier)
+              const rarityGlowColor = getRarityGlowColor(displayRarityTier)
+              const combinedRarityPercentage = calculateCombinedRarityPercentage(
+                petRarityTier,
+                colorRarityTier
+              )
 
               const targetPos = targetPositions[index] || { left: 0, top: 0 }
 
               return (
                 <div
-                  key={pet.slug}
-                  className="absolute transition-all duration-700 ease-out"
-                  style={{
-                    opacity: revealed ? 1 : 0,
-                    width: '22.4rem',
-                    maxWidth: '22.4rem',
-                    left: '50%',
-                    top: '50%',
-                    transform: isAnimating
-                      ? 'translate(-50%, -50%) scale(1)'
-                      : targetPositions.length > 0
-                        ? `translate(calc(-50% + ${targetPos.left}px), calc(-50% + ${targetPos.top}px)) scale(0.614)`
-                        : 'translate(-50%, -50%) scale(1)',
-                    pointerEvents: revealed ? 'auto' : 'none',
-                    transitionDelay: isAnimating ? '0ms' : `${index * 100 + 300}ms`,
-                    zIndex: isAnimating ? 50 - index : 'auto',
+                  key={`${pet.slug}-${color.slug}`}
+                  className="group/card absolute transition-all duration-700 ease-out"
+                  style={
+                    {
+                      opacity: revealed ? 1 : 0,
+                      width: '22.4rem',
+                      maxWidth: '22.4rem',
+                      left: '50%',
+                      top: '50%',
+                      transform: isAnimating
+                        ? 'translate(-50%, -50%) scale(1)'
+                        : targetPositions.length > 0
+                          ? `translate(calc(-50% + ${targetPos.left}px), calc(-50% + ${targetPos.top}px)) scale(0.614)`
+                          : 'translate(-50%, -50%) scale(1)',
+                      pointerEvents: revealed && animationComplete ? 'auto' : 'none',
+                      transitionDelay: isAnimating ? '0ms' : `${index * 100 + 300}ms`,
+                      transitionProperty: isAnimating
+                        ? 'transform, opacity, width, max-width, left, top'
+                        : 'transform, opacity, width, max-width, left, top',
+                      zIndex: hoveredCardIndex === index ? 999999 : revealed ? 50 - index : 'auto',
+                    } as React.CSSProperties
+                  }
+                  ref={(el) => {
+                    cardContainerRefs.current[index] = el
+                  }}
+                  onMouseEnter={() => {
+                    if (animationComplete) {
+                      // Set z-index immediately via DOM to avoid React render delay
+                      const container = cardContainerRefs.current[index]
+                      if (container) {
+                        container.style.zIndex = '999999'
+                      }
+                      setHoveredCardIndex(index)
+                    }
+                  }}
+                  onMouseLeave={() => {
+                    if (animationComplete) {
+                      // Reset z-index immediately via DOM
+                      const container = cardContainerRefs.current[index]
+                      if (container) {
+                        container.style.zIndex = revealed ? String(50 - index) : 'auto'
+                      }
+                      setHoveredCardIndex(null)
+                    }
                   }}
                 >
                   <Link href={`/pets/${pet.slug}`} className="block overflow-visible">
                     <Card
-                      className="comic-card group relative h-full cursor-pointer transition-transform duration-300 hover:-rotate-1 hover:scale-105"
+                      className={cn(
+                        'comic-card group relative h-full cursor-pointer transition-transform duration-300 hover:-rotate-1',
+                        animationComplete && 'hover:scale-[1.575]'
+                      )}
                       style={
                         {
                           '--rarity-glow-color': rarityGlowColor,
@@ -260,11 +409,20 @@ export default function DiscoverFriendsPage() {
                       <div className="relative aspect-square w-full overflow-hidden rounded-t-[12px] bg-gradient-to-br from-gray-50 via-white to-gray-50 p-3">
                         <div className="relative h-full w-full rounded-sm border-2 border-gray-300 bg-white">
                           <Image
-                            src={pet.defaultColorPath}
-                            alt={pet.name}
+                            src={color.imagePathFemale || pet.defaultColorPath}
+                            alt={`${pet.name} - ${color.name}`}
                             fill
                             className="object-contain p-1"
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            unoptimized
+                            onError={(e) => {
+                              // Fallback to default color if image fails to load
+                              const target = e.target as HTMLImageElement
+                              const defaultPath = pet.defaultColorPath
+                              if (!target.src.includes(defaultPath)) {
+                                target.src = defaultPath
+                              }
+                            }}
                           />
                         </div>
                         {/* Comic book shine effect */}
@@ -273,17 +431,17 @@ export default function DiscoverFriendsPage() {
 
                       <CardContent className="rounded-b-[12px] border-t-2 border-gray-200 bg-white">
                         <h3 className="mb-2 text-center font-comic text-xl font-extrabold text-gray-900">
-                          {pet.name}
+                          {color.name.charAt(0).toUpperCase() + color.name.slice(1)} {pet.name}
                         </h3>
+                        <div className="mb-2 text-center">
+                          <span className="font-comic text-sm font-bold text-gray-600">
+                            ({combinedRarityPercentage}%)
+                          </span>
+                        </div>
                         <div className="flex items-center justify-center gap-2">
                           <Badge variant="primary" className="px-3 py-1 text-sm">
                             {pet.totalColors} Variants
                           </Badge>
-                        </div>
-                        <div className="mt-2 text-center">
-                          <span className="text-xs font-bold uppercase tracking-wide text-gray-500">
-                            Collector&apos;s Edition
-                          </span>
                         </div>
                       </CardContent>
                     </Card>
@@ -300,9 +458,9 @@ export default function DiscoverFriendsPage() {
               style={{ visibility: 'hidden', position: 'absolute', pointerEvents: 'none' }}
             >
               <div className="grid grid-cols-1 gap-8 overflow-visible sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                {randomPets.map((pet, index) => (
+                {randomPets.map((petWithColor, index) => (
                   <div
-                    key={`measure-${pet.slug}`}
+                    key={`measure-${petWithColor.pet.slug}-${petWithColor.color.slug}`}
                     className="relative"
                     ref={(el) => {
                       if (el) cardRefs.current[index] = el
