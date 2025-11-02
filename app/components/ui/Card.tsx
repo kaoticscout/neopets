@@ -15,7 +15,10 @@ export function Card({ className, children, ...props }: CardProps) {
       className={cn(
         !isComicCard && 'bubble',
         isComicCard ? 'overflow-visible' : 'overflow-hidden',
-        'rounded-big transition-all duration-300',
+        // Use specific transitions for comic-cards to avoid affecting border
+        isComicCard
+          ? 'transition-[transform,box-shadow] duration-300'
+          : 'rounded-big transition-all duration-300',
         className
       )}
       {...props}
