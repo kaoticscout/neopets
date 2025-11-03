@@ -48,10 +48,8 @@ next-env.d.ts
 # OS
 Thumbs.db
 
-# Public images (copied from data)
-public/neopets/art
-
-# Source images in data directory (too large for git, copied to public during build)
+# Source images in data directory (too large for git)
+# Note: public/neopets/art is NOT ignored - images need to be committed for static export
 data/neopets/art/
 
 # Test files
