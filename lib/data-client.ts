@@ -4,6 +4,7 @@
  */
 
 import { getColorImagePaths } from './imagePaths'
+import { getUrl } from './utils-basepath'
 
 export interface PetData {
   name: string
@@ -120,7 +121,7 @@ export async function getAllPets(): Promise<PetData[]> {
  */
 export async function getPetBySlug(slug: string): Promise<PetData | null> {
   try {
-    const res = await fetch(`/data/${slug}.json`)
+    const res = await fetch(getUrl(`/data/${slug}.json`))
     if (!res.ok) {
       return null
     }

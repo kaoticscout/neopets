@@ -3,6 +3,8 @@
  * Based on the TRD image path structure
  */
 
+import { getBasePath } from './utils-basepath'
+
 export interface ImagePathOptions {
   petSlug: string
   colorName: string // Use actual color name (e.g., "oil paint", "polka dot") to match file names
@@ -14,10 +16,15 @@ export interface ImagePathOptions {
  * @param options - Pet, color, and gender information
  * @returns Path relative to public directory (e.g., '/neopets/art/acara/female/blue.png')
  * @note colorName should match the JSON color name exactly (spaces preserved)
+ * @note Automatically includes basePath if configured
  */
 export function getNeopetImagePath(options: ImagePathOptions): string {
   const { petSlug, colorName, gender = 'female' } = options
-  return `/neopets/art/${petSlug}/${gender}/${colorName}.png`
+  const imagePath = `/neopets/art/${petSlug}/${gender}/${colorName}.png`
+  const basePath = getBasePath()
+  // Remove trailing slash from basePath if present, then combine
+  const cleanBasePath = basePath.replace(/\/$/, '')
+  return `${cleanBasePath}${imagePath}`
 }
 
 /**
