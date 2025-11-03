@@ -32,9 +32,10 @@ export function getBasePath(): string {
 
   // Method 2: Check embedded environment variable (NEXT_PUBLIC_ vars are embedded at build time)
   try {
-    // @ts-expect-error - process.env is available in Next.js client bundle for NEXT_PUBLIC_ vars
-    if (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_BASE_PATH) {
-      const envPath = String(process.env.NEXT_PUBLIC_BASE_PATH)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (typeof process !== 'undefined' && (process as any).env?.NEXT_PUBLIC_BASE_PATH) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const envPath = String((process as any).env.NEXT_PUBLIC_BASE_PATH)
       if (envPath) {
         return envPath.replace(/\/$/, '')
       }
