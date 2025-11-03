@@ -19,6 +19,9 @@ export function logBasePathInfo() {
     | { basePath?: string; assetPrefix?: string }
     | undefined
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const envBasePath = typeof process !== 'undefined' && (process as any).env?.NEXT_PUBLIC_BASE_PATH
+
   console.log('[BasePath Debug]', {
     detectedBasePath,
     testUrl,
@@ -26,7 +29,6 @@ export function logBasePathInfo() {
     hostname: window.location.hostname,
     href: window.location.href,
     __NEXT_DATA__: nextData,
-    // @ts-expect-error - NEXT_PUBLIC_ env vars are embedded at build time by Next.js
-    envBasePath: typeof process !== 'undefined' ? process.env?.NEXT_PUBLIC_BASE_PATH : 'N/A',
+    envBasePath: envBasePath || 'N/A',
   })
 }
