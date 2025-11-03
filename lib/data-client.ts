@@ -121,8 +121,47 @@ export async function getAllPets(): Promise<PetData[]> {
  */
 export async function getPetBySlug(slug: string): Promise<PetData | null> {
   try {
-    const res = await fetch(getUrl(`/data/${slug}.json`))
+    const url = getUrl(`/data/${slug}.json`)
+
+    // Debug logging (can be removed in production)
+    if (typeof window !== 'undefined' && window.location.hostname.includes('github.io')) {
+      console.log(`[Data Fetch] Attempting to fetch ${slug} from: ${url}`)
+    }
+
+    const res = await fetch(url)
     if (!res.ok) {
+      console.warn(`Failed to fetch pet ${slug} from ${url}: ${res.status} ${res.statusText}`)
+      // Try fallback without basePath in case basePath detection failed
+      if (url.includes('/data/') && url !== `/data/${slug}.json`) {
+        console.log(`[Data Fetch] Trying fallback: /data/${slug}.json`)
+        const fallbackRes = await fetch(`/data/${slug}.json`)
+        if (fallbackRes.ok) {
+          const data: PetJsonData = await fallbackRes.json()
+          // Process data the same way...
+          const colors: ColorData[] = Object.entries(data).map(([colorName, colorData]) => {
+            const colorSlug = colorName.toLowerCase().replace(/\s+/g, '-')
+            const paths = getColorImagePaths(slug, colorName)
+            return {
+              name: colorName,
+              slug: colorSlug,
+              femaleId: colorData.female,
+              maleId: colorData.male,
+              ucExist: colorData.UCexist ?? false,
+              imagePathFemale: paths.female,
+              imagePathMale: paths.male,
+            }
+          })
+          const defaultColor = colors.find((c) => c.slug === 'blue') || colors[0]
+          const defaultColorPath = defaultColor?.imagePathFemale || '/neopets/art/default.png'
+          return {
+            name: capitalizeFirst(slug),
+            slug,
+            totalColors: colors.length,
+            colors,
+            defaultColorPath,
+          }
+        }
+      }
       return null
     }
 
@@ -143,7 +182,11 @@ export async function getPetBySlug(slug: string): Promise<PetData | null> {
     })
 
     const defaultColor = colors.find((c) => c.slug === 'blue') || colors[0]
-    const defaultColorPath = defaultColor?.imagePathFemale || '/neopets/art/default.png'
+    // Use getNeopetImagePath to ensure basePath is included
+    const defaultColorPath =
+      defaultColor?.imagePathFemale ||
+      getColorImagePaths(slug, 'blue').female ||
+      '/neopets/art/default.png'
 
     return {
       name: capitalizeFirst(slug),
