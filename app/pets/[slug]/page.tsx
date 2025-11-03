@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePet } from '../../../hooks/usePets'
@@ -20,7 +20,7 @@ import {
   getRarityGlowColor,
 } from '../../../lib/rarity'
 
-export default function PetDetailPage() {
+function PetDetailContent() {
   const params = useParams()
   const searchParams = useSearchParams()
   const slug = params.slug as string
@@ -408,5 +408,30 @@ export default function PetDetailPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function PetDetailPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+          <div className="mb-8">
+            <Skeleton className="mb-4 h-10 w-48" />
+            <Skeleton className="h-6 w-96" />
+          </div>
+          <div className="mb-8 grid gap-8 md:grid-cols-2">
+            <Skeleton className="aspect-square" />
+            <div className="space-y-4">
+              <Skeleton className="h-6 w-full" />
+              <Skeleton className="h-6 w-full" />
+              <Skeleton className="h-6 w-3/4" />
+            </div>
+          </div>
+        </div>
+      }
+    >
+      <PetDetailContent />
+    </Suspense>
   )
 }

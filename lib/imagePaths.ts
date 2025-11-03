@@ -33,8 +33,14 @@ export function getColorImagePaths(petSlug: string, colorName: string) {
 
 /**
  * Validate that an image file exists (for build-time validation)
+ * Server-only function - only works in Node.js environment
  */
 export async function validateImageExists(imagePath: string): Promise<boolean> {
+  // Only run on server (Node.js environment)
+  if (typeof window !== 'undefined') {
+    return false
+  }
+
   // Implementation for checking file existence
   // Used during build or data import
   try {
