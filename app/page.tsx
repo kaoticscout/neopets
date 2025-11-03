@@ -53,8 +53,8 @@ export default function Home() {
       {/* Stats Section */}
       <section className="mb-16 grid grid-cols-1 gap-6 md:grid-cols-3">
         <Card className="comic-card relative border-neopets-blue">
-          <div className="absolute -right-3 -top-3">
-            <span className="rarity-sticker bg-neopets-blue font-comic text-xs text-white shadow-[0_0_8px_rgba(74,144,226,0.4)]">
+          <div className="absolute -right-3 -top-3 z-20">
+            <span className="rarity-sticker rounded-full bg-neopets-blue px-2.5 py-1 font-comic text-xs font-bold text-white shadow-lg">
               #{stats?.totalPets || '?'}
             </span>
           </div>
@@ -75,8 +75,8 @@ export default function Home() {
         </Card>
 
         <Card className="comic-card relative border-neopets-pink">
-          <div className="absolute -right-3 -top-3">
-            <span className="rarity-sticker bg-neopets-pink font-comic text-xs text-white shadow-[0_0_8px_rgba(255,107,157,0.4)]">
+          <div className="absolute -right-3 -top-3 z-20">
+            <span className="rarity-sticker rounded-full bg-neopets-pink px-2.5 py-1 font-comic text-xs font-bold text-white shadow-lg">
               Rare!
             </span>
           </div>
@@ -97,8 +97,8 @@ export default function Home() {
         </Card>
 
         <Card className="comic-card relative border-neopets-yellow">
-          <div className="absolute -right-3 -top-3">
-            <span className="rarity-sticker bg-neopets-yellow font-comic text-xs text-gray-800 shadow-[0_0_8px_rgba(255,217,61,0.4)]">
+          <div className="absolute -right-3 -top-3 z-20">
+            <span className="rarity-sticker rounded-full bg-neopets-yellow px-2.5 py-1 font-comic text-xs font-bold text-gray-800 shadow-lg">
               Mint!
             </span>
           </div>
@@ -129,8 +129,8 @@ export default function Home() {
         </p>
         <div className="mx-auto grid max-w-4xl grid-cols-1 gap-8 md:grid-cols-2">
           <Card className="comic-card relative border-neopets-green hover:rotate-1">
-            <div className="absolute -right-3 -top-3">
-              <span className="rarity-sticker bg-neopets-green font-comic text-xs text-white shadow-[0_0_8px_rgba(107,207,127,0.4)]">
+            <div className="absolute -right-3 -top-3 z-20">
+              <span className="rarity-sticker rounded-full bg-neopets-green px-2.5 py-1 font-comic text-xs font-bold text-white shadow-lg">
                 55+
               </span>
             </div>
@@ -148,8 +148,8 @@ export default function Home() {
           </Card>
 
           <Card className="comic-card relative border-neopets-purple hover:rotate-1">
-            <div className="absolute -right-3 -top-3">
-              <span className="rarity-sticker bg-neopets-purple font-comic text-xs text-white shadow-[0_0_8px_rgba(167,139,250,0.4)]">
+            <div className="absolute -right-3 -top-3 z-20">
+              <span className="rarity-sticker rounded-full bg-neopets-purple px-2.5 py-1 font-comic text-xs font-bold text-white shadow-lg">
                 Rare!
               </span>
             </div>
